@@ -5,6 +5,8 @@ import uy.edu.um.adt.BinaryTree.BinarySearchTreeImpl;
 import uy.edu.um.adt.BinaryTree.BinarySearchTree;;
 import uy.edu.um.adt.LinkedList.MyList;
 
+import java.util.ArrayList;
+
 public class TestBinary {
 
     @Test
@@ -14,13 +16,13 @@ public class TestBinary {
         oTree.add(3, 3);
         oTree.add(21, 21);
         oTree.add(11, 11);
-        oTree.add(-1, -1);
+        oTree.add(2, 2);
         oTree.add(4, 4);
         oTree.add(18, 18);
 
-        MyList<Integer> colValues = oTree.inOrder();
+        ArrayList<Integer> colValues = oTree.inOrder();
 
-        assertEquals(new Integer(-1), colValues.get(0));
+        assertEquals(new Integer(2), colValues.get(0));
         assertEquals(new Integer(3), colValues.get(1));
         assertEquals(new Integer(4), colValues.get(2));
         assertEquals(new Integer(11), colValues.get(3));
@@ -43,7 +45,7 @@ public class TestBinary {
         oTree.remove(-1);
         oTree.remove(18);
 
-        MyList<Integer> colValues = oTree.inOrder();
+        ArrayList<Integer> colValues = oTree.inOrder();
 
         assertEquals(new Integer(4), colValues.get(0));
         assertEquals(new Integer(11), colValues.get(1));
@@ -64,7 +66,7 @@ public class TestBinary {
         oTree.remove(18);
         oTree.remove(4);
 
-        MyList<Integer> colValues = oTree.inOrder();
+        ArrayList<Integer> colValues = oTree.inOrder();
 
         assertEquals(0, colValues.size());
     }

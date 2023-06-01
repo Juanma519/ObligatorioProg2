@@ -1,5 +1,7 @@
 package uy.edu.um.adt.BinaryTree;
-import uy.edu.um.adt.LinkedList.MyList;
+
+import java.util.ArrayList;
+
 public interface BinarySearchTree<K extends Comparable<K>, V> {
     void add(K key, V value);
 
@@ -9,6 +11,6 @@ public interface BinarySearchTree<K extends Comparable<K>, V> {
 
     V find(K key);
 
-    MyList<K> inOrder();
+    ArrayList<V> inOrder();
 
 }
