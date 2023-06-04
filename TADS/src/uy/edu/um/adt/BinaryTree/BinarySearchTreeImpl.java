@@ -1,8 +1,8 @@
 package uy.edu.um.adt.BinaryTree;
 
 import java.lang.Comparable;
-import java.util.ArrayList;
 
+import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 public class BinarySearchTreeImpl<K extends Comparable<K>,V> implements BinarySearchTree<K,V>{
     private TreeNode<K,V> root;
 
@@ -12,44 +12,86 @@ public class BinarySearchTreeImpl<K extends Comparable<K>,V> implements BinarySe
 
     @Override
     public void add(K key, V value) {
-        TreeNode nuevo = new TreeNode(key, value);
+        TreeNode<K,V> nuevo = new TreeNode(key, value);
         if (this.root == null) {
             this.root = nuevo;
         }
         else {
-            TreeNode padre = null;
-            TreeNode buscar = this.root;
-            while (buscar != null) {
-                padre = buscar;
-                if ( buscar.getKey().compareTo(key)<0) {
-                    buscar = buscar.getLeftChild();
-                }
-                else {
-                    buscar = buscar.getRightChild();
+            TreeNode<K,V> currentNode = this.root;
+            TreeNode<K,V> parentNode = null;
+            while (currentNode != null){
+                parentNode = currentNode;
+                if (currentNode.key.compareTo(key) > 0){
+                    currentNode = currentNode.getLeftChild();
+                }else{
+                    currentNode = currentNode.getRightChild();
                 }
             }
-            if (padre.getKey().compareTo(key) >0) {
-                padre.setLeftChild(nuevo);
-            } else {
-                padre.setRightChild(nuevo);
+            if (parentNode.key.compareTo(key) > 0){
+                parentNode.setLeftChild(nuevo);
+            }else{
+                parentNode.setRightChild(nuevo);
             }
         }
+
     }
 
+    //funcion que elimine un nodo
     @Override
     public void remove(K key) {
-        TreeNode eliminar = (TreeNode) find(key);
-        while (eliminar.getLeftChild() != null || eliminar.getRightChild() != null) {
-            if (eliminar.getLeftChild() != null) {
-                eliminar.swapValue(eliminar, eliminar.getLeftChild());
-                eliminar = eliminar.getLeftChild();
-            } else {
-                eliminar.swapValue(eliminar, eliminar.getRightChild());
-                eliminar = eliminar.getRightChild();
+        TreeNode<K,V> currentNode = this.root;
+        TreeNode<K,V> parentNode = null;
+        while (currentNode != null){
+            if (currentNode.key.equals(key)){
+                if (currentNode.getLeftChild() == null && currentNode.getRightChild() == null){
+                    if (parentNode == null){
+                        this.root = null;
+                    }else if (parentNode.getLeftChild() == currentNode){
+                        parentNode.setLeftChild(null);
+                    }else{
+                        parentNode.setRightChild(null);
+                    }
+                }else if (currentNode.getLeftChild() == null){
+                    if (parentNode == null){
+                        this.root = currentNode.getRightChild();
+                    }else if (parentNode.getLeftChild() == currentNode){
+                        parentNode.setLeftChild(currentNode.getRightChild());
+                    }else{
+                        parentNode.setRightChild(currentNode.getRightChild());
+                    }
+                }else if (currentNode.getRightChild() == null){
+                    if (parentNode == null){
+                        this.root = currentNode.getLeftChild();
+                    }else if (parentNode.getLeftChild() == currentNode){
+                        parentNode.setLeftChild(currentNode.getLeftChild());
+                    }else{
+                        parentNode.setRightChild(currentNode.getLeftChild());
+                    }
+                }else{
+                    TreeNode<K,V> minNode = currentNode.getRightChild();
+                    TreeNode<K,V> minNodeParent = currentNode;
+                    while (minNode.getLeftChild() != null){
+                        minNodeParent = minNode;
+                        minNode = minNode.getLeftChild();
+                    }
+                    currentNode.key = minNode.key;
+                    currentNode.setValue( minNode.getValue());
+                    if (minNodeParent.getLeftChild() == minNode){
+                        minNodeParent.setLeftChild(minNode.getRightChild());
+                    }else{
+                        minNodeParent.setRightChild(minNode.getRightChild());
+                    }
+                }
+                return;
+            }else if (currentNode.key.compareTo(key) > 0){
+                parentNode = currentNode;
+                currentNode = currentNode.getLeftChild();
+            }else{
+                parentNode = currentNode;
+                currentNode = currentNode.getRightChild();
             }
         }
-        eliminar.setKey(null);
-        eliminar.setValue(null);
+
     }
 
     @Override
@@ -86,39 +128,65 @@ public class BinarySearchTreeImpl<K extends Comparable<K>,V> implements BinarySe
 
     @Override
     public V find(K key) {
-        TreeNode encontrado = null;
-        TreeNode buscar = this.root;
-        if (buscar.getKey() == key) {
-            encontrado = buscar;
-        } else {
-            while (buscar != null) {
-                if (buscar.getKey().compareTo(key) <0) {
-                    buscar = buscar.getLeftChild();
-                } else {
-                    buscar = buscar.getRightChild();
+        TreeNode<K, V> currentNode = this.root; //root es el nodo raiz
+        while (currentNode != null) {
+            if (currentNode.key.equals(key)) { //equals es para comparar objetos
+                return currentNode.getValue();
+            } else if (currentNode.key.compareTo(key) > 0) { //si es mayor a 0, entonces es mayor
+                currentNode = currentNode.getLeftChild();
+            } else {
+                currentNode = currentNode.getRightChild();
+            }
+        }
+        if (currentNode == null) {
+            return null;
+        }
+        return currentNode.getValue();
+    }
+    //funcion recursiva que recorra el arbol de forma inorder y devuelva una lista (arraylist) con los valores visitados
+    @Override
+    public MyLinkedListImpl inOrder() {
+        MyLinkedListImpl<K> list = new MyLinkedListImpl<>();
+        TreeNode<K,V> currentNode = this.root;
+        while (currentNode != null){
+            if (currentNode.getLeftChild() == null){
+                list.add(currentNode.key);
+                currentNode = currentNode.getRightChild();
+            }else{
+                TreeNode<K,V> predecesor = currentNode.getLeftChild();
+                while (predecesor.getRightChild() != null && predecesor.getRightChild() != currentNode){
+                    predecesor = predecesor.getRightChild();
                 }
-                if (buscar.getKey() == key) {
-                    encontrado = buscar;
+                if (predecesor.getRightChild() == null){
+                    predecesor.setRightChild(currentNode);
+                    currentNode = currentNode.getLeftChild();
+                }else{
+                    predecesor.setRightChild(null);
+                    list.add(currentNode.key);
+                    currentNode = currentNode.getRightChild();
                 }
             }
         }
-        return (V) encontrado.getValue();
-    }
 
-    //funcion recursiva que recorra el arbol de forma inorder y devuelva una lista (arraylist) con los valores visitados
+        return list;
+
+    }
+    //funcion que cuente el numero de nodos
     @Override
-    public ArrayList<V> inOrder() {
-        ArrayList<V> lista = new ArrayList<V>();
-        inOrder(root, lista);
-        return lista;
+    public int size() {
+        return contador(this.root);
+
     }
 
-    private void inOrder(TreeNode<K,V> node, ArrayList<V> lista) {
-        if (node != null) {
-            inOrder(node.getLeftChild(), lista);
-            lista.add(node.getValue());
-            inOrder(node.getRightChild(), lista);
+
+    public int contador(TreeNode<K, V> currentNode){
+        if(currentNode == null) {
+            return 0;
+        }else{
+            int leftSize = contador(currentNode.getLeftChild());
+            int rightSize = contador(currentNode.getRightChild());
+            return leftSize + rightSize + 1;
         }
-
     }
- }
+
+}

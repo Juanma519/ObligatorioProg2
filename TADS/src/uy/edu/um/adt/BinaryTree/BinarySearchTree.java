@@ -1,6 +1,6 @@
 package uy.edu.um.adt.BinaryTree;
 
-import java.util.ArrayList;
+import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 
 public interface BinarySearchTree<K extends Comparable<K>, V> {
     void add(K key, V value);
@@ -11,6 +11,8 @@ public interface BinarySearchTree<K extends Comparable<K>, V> {
 
     V find(K key);
 
-    ArrayList<V> inOrder();
+    MyLinkedListImpl inOrder();
 
+    //funcion que cuente el numero de nodos
+    int size();
 }

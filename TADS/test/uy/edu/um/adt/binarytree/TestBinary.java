@@ -3,10 +3,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import uy.edu.um.adt.BinaryTree.BinarySearchTreeImpl;
 import uy.edu.um.adt.BinaryTree.BinarySearchTree;;
+import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 import uy.edu.um.adt.LinkedList.MyList;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("ALL")
 public class TestBinary {
 
     @Test
@@ -20,7 +22,7 @@ public class TestBinary {
         oTree.add(4, 4);
         oTree.add(18, 18);
 
-        ArrayList<Integer> colValues = oTree.inOrder();
+        MyLinkedListImpl colValues = oTree.inOrder();
 
         assertEquals(new Integer(2), colValues.get(0));
         assertEquals(new Integer(3), colValues.get(1));
@@ -45,7 +47,7 @@ public class TestBinary {
         oTree.remove(-1);
         oTree.remove(18);
 
-        ArrayList<Integer> colValues = oTree.inOrder();
+        MyLinkedListImpl<Integer> colValues = oTree.inOrder();
 
         assertEquals(new Integer(4), colValues.get(0));
         assertEquals(new Integer(11), colValues.get(1));
@@ -66,7 +68,7 @@ public class TestBinary {
         oTree.remove(18);
         oTree.remove(4);
 
-        ArrayList<Integer> colValues = oTree.inOrder();
+        MyLinkedListImpl<Integer> colValues = oTree.inOrder();
 
         assertEquals(0, colValues.size());
     }
