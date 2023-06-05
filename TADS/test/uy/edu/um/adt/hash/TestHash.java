@@ -27,7 +27,7 @@ public void testFlujoNormal() {
 
     assertFalse(hash.contains(3));
     assertNull(hash.get(3));
-    //LE FALTAN UN PAR DE TESTS;
-}
+
+    }
 }
 

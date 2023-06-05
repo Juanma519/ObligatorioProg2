@@ -188,6 +188,11 @@ public class MyLinkedListImpl<T> implements MyList<T>, MyQueue<T>, MyStack<T> {
         return size;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
     // Operaciones particulares a Queue
 
     @Override

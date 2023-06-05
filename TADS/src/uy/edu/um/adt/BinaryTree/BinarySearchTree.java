@@ -13,6 +13,6 @@ public interface BinarySearchTree<K extends Comparable<K>, V> {
 
     MyLinkedListImpl inOrder();
 
-    //funcion que cuente el numero de nodos
+
     int size();
 }

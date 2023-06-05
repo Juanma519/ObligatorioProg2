@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HashImpl<K,V> implements MyHash<K,V> {
-    //implementar todas esas funciones con el hash cerrado usando hashcode()
+
     private HashNode[] hashTable;
     private int tableSize;
 
@@ -12,7 +12,6 @@ public class HashImpl<K,V> implements MyHash<K,V> {
         this.hashTable = new HashNode[size];
     }
 
-    //PUT DE UN HASH CERRADO
     @Override
     public void put(K key, V value) {
         int lugar = key.hashCode() % tableSize;
@@ -42,7 +41,7 @@ public class HashImpl<K,V> implements MyHash<K,V> {
         }
 
     }
-    //double the size of the table and rehash all the elements
+    //duplica el tamaño del hash
     private void doubleSize() {
         tableSize *= 2;
         HashNode[] oldTable = hashTable;

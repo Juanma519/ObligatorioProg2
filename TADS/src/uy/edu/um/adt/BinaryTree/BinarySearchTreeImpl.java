@@ -143,7 +143,7 @@ public class BinarySearchTreeImpl<K extends Comparable<K>,V> implements BinarySe
         }
         return currentNode.getValue();
     }
-    //funcion recursiva que recorra el arbol de forma inorder y devuelva una lista (arraylist) con los valores visitados
+
     @Override
     public MyLinkedListImpl inOrder() {
         MyLinkedListImpl<K> list = new MyLinkedListImpl<>();

@@ -6,8 +6,9 @@ public interface MyStack<T> {
 
     T pop() throws EmptyStackException;
 
-    T peek();
+    T peek() throws EmptyStackException;
 
     int size();
+    boolean isEmpty();
 
 }
