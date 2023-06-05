@@ -10,4 +10,6 @@ public interface MyQueue<T> {
 
     int size();
 
+    boolean isEmpty();
+
 }
