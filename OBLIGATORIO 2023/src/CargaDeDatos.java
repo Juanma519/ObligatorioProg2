@@ -7,7 +7,7 @@ import java.io.Reader;
 
 public class CargaDeDatos {
     public static void main(String[] args) throws IOException {
-        Reader in = new FileReader("ACA VA EL NOMBRE DEL ARCHIVO");
+        Reader in = new FileReader("OBLIGATORIO 2023/src/f1_dataset_test.csv");
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
 
         for (CSVRecord record : parser) {
