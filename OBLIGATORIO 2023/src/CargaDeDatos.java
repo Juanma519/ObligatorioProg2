@@ -1,37 +1,69 @@
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import uy.edu.um.adt.LinkedList.*;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.time.LocalDate;
 
 public class CargaDeDatos {
-    public static void main(String[] args) throws IOException {
+    public static MyList<Tweet> tweets;
+    public static MyList<Hashtag> hashtagsdif;
+    public static void CargaDeDatos() throws IOException, NumberFormatException {
         Reader in = new FileReader("OBLIGATORIO 2023/Data/f1_dataset_test.csv");
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
         parser.iterator().next();
         int favoritos;
         for (CSVRecord record : parser) {
-            String id = record.get(0);  // Acceder al valor de la primera columna
-            String username = record.get(1);  // Acceder al valor de la segunda columna
-            if (record.get(7).contains(".")) {
-                double doubleValue = Double.parseDouble(record.get(7));
-                favoritos = (int) Math.round(doubleValue);
+            long idtweet;
+            try {
+                idtweet = Long.parseLong(record.get(0));
+            }  // Acceder al valor de la primera columna
+            catch (NumberFormatException e) {
+                continue;
             }
-            else {
-                favoritos = Integer.parseInt(record.get(7));
+            String username = record.get(1);  // Acceder al valor de la segunda columna
+            try {
+                if (record.get(7).contains(".")) {
+                    double doubleValue = Double.parseDouble(record.get(7));
+                    favoritos = (int) Math.round(doubleValue);
+                } else {
+                    favoritos = Integer.parseInt(record.get(7));
+                }
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            LocalDate fecha;
+            try {
+                fecha = LocalDate.parse(record.get(9));
+            } catch (Exception e) {
+                continue;
             }
             String texto = record.get(10);
-            String hashtags = record.get(11);
+
+            String cleanInput = record.get(11).replaceAll("[\\[\\]']", ""); // Eliminar los corchetes y las comillas
+            String[] values = cleanInput.split(", "); // Dividir la cadena en partes separadas por comas
+
             String source = record.get(12);
-            boolean isRetweet;
-            if (record.get(13).equalsIgnoreCase("True")) {
-                isRetweet = true;
-            } else{
-                isRetweet = false;
+
+            boolean isretweet;
+            try {
+                isretweet = Boolean.parseBoolean(record.get(13));
+            } catch (NumberFormatException e) {
+                continue;
             }
+
             //User  = new User(id,username);  //HAY UNOS PROBLEMAS CON LOS LONG Y LOS BOOLEAN E INt
-            System.out.println(id + " " + username + " " + favoritos + " " + texto + " " + hashtags + " " + source + " " + isRetweet);
+            Tweet tweet = new Tweet(idtweet, texto, username, fecha, source, favoritos, isretweet);
+            tweets.add(tweet);
+            for (int i = 0; i < values.length; i++) {
+                Hashtag hashtag = new Hashtag(values[i], fecha);
+                if (!hashtagsdif.contains(hashtag)) {
+                    hashtagsdif.add(hashtag);  //CAPAZ SE PUEDE HACER ALGO PARA AGILIZAR, COMO USAR OTRO TIPO DE LISTA
+                }
+            }
         }
 //la primera columna no es id
         parser.close();
