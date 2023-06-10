@@ -70,6 +70,18 @@ public class CargaDeDatos {
         in.close();
 
     }
+    public static int encontrarTweets(String frase){
+        int cantidad=0;
+        String content="";
+        for(int i=0;i<tweets.size();i++){
+            content=tweets.get(i).getContent();
+            if(content.contains(frase)) {
+                cantidad++;
+            }
+        }
+
+        return cantidad;
+    }
 }
 //1 dni 2 user name 3 user location 4 descripcion 5 año creado cuenta 6 followers 7friends 8 favourites
 //9verified 10 date del tweet 11 texto del tweet  12 hashtags 13 source 14 isretweet is boolean

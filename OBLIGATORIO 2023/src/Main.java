@@ -1,13 +1,8 @@
-import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
-import uy.edu.um.adt.LinkedList.MyList;
-
 import java.time.LocalDate;
 import java.util.Scanner;
 
 ;
 public class Main {
-    private static MyList<User> usuarios=new MyLinkedListImpl();
-    private static MyList<Tweet> tweets=new MyLinkedListImpl(); //HAY QUE VER DE Q TIPO DE LISTA USAMOS, PARA MEJORAR LA EFICIENCIA
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Digite que informacion requiere: ");
@@ -36,8 +31,10 @@ public class Main {
                         CargaDeDatos.CargaDeDatos();
                     } catch (Exception e) {
                         e.printStackTrace(); //no creo q sea esta excepcion
-                        continue;
+                        System.out.println("Error en la carga de datos");
+                        break;
                     }
+                    break;
 
                 case 1:
                     int year;
@@ -47,20 +44,20 @@ public class Main {
                         year = sc.nextInt();
                     } catch (Exception e) {
                         System.out.println("Formato de año incorrecto");
-                        continue;
+                        break;
                     }
                     System.out.println("Digite el mes que desea consultar: ");
                     try {
                         month = sc.nextInt();
                     } catch (Exception e) {
                         System.out.println("Formato de mes incorrecto");
-                        continue;
+                        break;
                     }
                     LocalDate fecha = LocalDate.of(year, month, 1); //Esta parte funciona, adquiere la fecha
-                    continue;
+                    break;
 
                 case 2:
-                    continue;
+                    break;
 
                 case 3:
                     Scanner scfecha = new Scanner(System.in);
@@ -70,24 +67,24 @@ public class Main {
                         LocalDate dia = LocalDate.parse(format);
                     } catch (Exception e) {
                         System.out.println("Formato de fecha incorrecto");
-                        continue;
+                        break;
                     }
-                    continue;
+                    break;
 
                 case 4:
                     Scanner scfecha2 = new Scanner(System.in);
                     System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
                     String format = scfecha2.nextLine();
                     LocalDate dia = LocalDate.parse(format);
-                    continue;
+                    break;
                 case 5:
-                    continue;
+                    break;
                 case 6:
                     System.out.println("Digite la palabra o frase que desea buscar: ");
                     String frase = sc.nextLine();
-                    int veces = encontrarTweets(frase);
+                    int veces = CargaDeDatos.encontrarTweets(frase);
                     System.out.println("La cantidad de tweets con la palabra o frase especifica es: " + veces);
-                    continue;
+                    break;
 
                 case 7:
                     System.out.println("Salir del programa");
@@ -95,20 +92,12 @@ public class Main {
 
                 default:
                     System.out.println("Opcion no valida,vuelva a intentarlo");
-                    continue;
+                    break;
             }
 
 
         } while (opcion != 7);
     }
-    public static int encontrarTweets(String frase){
-        int cantidad=0;
-        for(int i=0;i<tweets.size();i++){
-            if(tweets.get(i).getContent().contains(frase)){
-                cantidad++;
-                }
-         }
-        return cantidad;
-    }
+
 }
 
