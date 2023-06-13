@@ -4,6 +4,7 @@ import uy.edu.um.adt.Hash.MyHash;
 public class User {
     private long id;
     private String name;
+    private int favoritos;
     private MyHash<Long,Tweet> tweets; // Se puede cambiar el tipo de lista segun convenga
     //Parece que conviene Hash,porque tiene el tiempo de ver el size mas corto.
     // no se como es eso del LONG ,POSIBLE ERROR
@@ -13,7 +14,12 @@ public class User {
         this.id = id;
         this.name = name;
         this.tweets = new HashImpl<>(500); //el size habria que ver cuantos tweets por usuario hay
+        this.favoritos=0;
 
+    }
+
+    public int getFavoritos() {
+        return favoritos;
     }
 
     public long getId() {
@@ -36,7 +42,9 @@ public class User {
         return tweets;
     }
 
-    public void setTweets(MyHash<Long,Tweet> tweets) {
-        this.tweets = tweets;
+    public void addTweet(Long idTweet, Tweet tweet) {
+        this.tweets.put(idTweet,tweet);
+        this.favoritos+=tweet.getLikes();
     }
+
 }

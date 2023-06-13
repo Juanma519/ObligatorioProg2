@@ -45,7 +45,9 @@ public class Main {
 
                 case 7:
                     System.out.println("Salir del programa");
+                    sc.close();
                     break;
+
 
                 default:
                     System.out.println("Opcion no valida,vuelva a intentarlo");
@@ -88,6 +90,7 @@ public class Main {
     }
     public static void opcion3(Scanner sc){
         System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
+        sc.nextLine();
         String format = sc.nextLine();
         LocalDate dia = LocalDate.parse(format);
         CargaDeDatos.hashtagsDistintosDia(dia);
@@ -96,10 +99,12 @@ public class Main {
     public static void opcion4(Scanner sc){
 
         System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
+        sc.nextLine();
         String format = sc.nextLine();
         LocalDate dia = LocalDate.parse(format);
     }
     public static void opcion5(){
+
     }
     public static void opcion6(Scanner sc){
         System.out.println("Digite la palabra o frase que desea buscar: ");

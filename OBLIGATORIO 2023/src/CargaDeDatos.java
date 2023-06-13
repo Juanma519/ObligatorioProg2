@@ -1,6 +1,8 @@
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import uy.edu.um.adt.Hash.HashImpl;
+import uy.edu.um.adt.Hash.MyHash;
 import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 import uy.edu.um.adt.LinkedList.MyList;
 
@@ -13,21 +15,27 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.Objects;
 
 public class CargaDeDatos {
     public static MyList<Tweet> tweets;
     public static MyList<String> pilotos;
     public static MyList<Hashtag> hashtagsdif;
     public static MyList<Hashtag> hashtagsdifdia;
+    public static MyHash<Long,User> usuarios;
 
     public static void cargaDeDatos() throws IOException, NumberFormatException {
         Reader in = new FileReader("OBLIGATORIO 2023/Data/f1_dataset_test.csv");
         tweets = new MyLinkedListImpl<Tweet>();
+        usuarios= new HashImpl<>(100000);
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
         parser.iterator().next();
         int favoritos;
         for (CSVRecord record : parser) {
             String username = record.get(1);  // Acceder al valor de la segunda columna
+            String fechaCreado=record.get(4);
+            long idUser= generateUniqueId(fechaCreado);
+
             try {
                 if (record.get(7).contains(".")) {
                     double doubleValue = Double.parseDouble(record.get(7));
@@ -38,9 +46,10 @@ public class CargaDeDatos {
             } catch (NumberFormatException e) {
                 continue;
             }
+            String paraFecha=record.get(9);
             LocalDateTime fechatweet;
             try {
-                fechatweet =convertStringToLocalDateTime(record.get(9));
+                fechatweet =convertStringToLocalDateTime(paraFecha);
             } catch (Exception e) {
                 System.out.println("Error en la fecha");  //ACA ESTA EK PROBLEMA
                 continue;
@@ -58,17 +67,17 @@ public class CargaDeDatos {
             } catch (NumberFormatException e) {
                 continue;
             }
-            long idtweet=generateUniqueId();
-
-            //User  = new User(,username);
+            long idtweet=generateUniqueId(paraFecha);
             Tweet tweet = new Tweet(idtweet,texto, username, fechatweet, source, favoritos, isretweet);
             tweets.add(tweet);
-            for (int i = 0; i < values.length; i++) {
-                Hashtag hashtag = new Hashtag(values[i], fechatweet);
-                if (!tweet.getHashtags().contains(hashtag)) {
-                    tweet.addHashtag(hashtag);  //CAPAZ SE PUEDE HACER ALGO PARA AGILIZAR, COMO USAR OTRO TIPO DE LISTA
+            if (!usuarios.contains(idUser)){  //Si no esta el usuario, lo agrega
+                User usuarioTemp = new User(idUser,username);
+                usuarios.put(usuarioTemp.getId(),usuarioTemp);
+                usuarioTemp.addTweet(tweet.getId(),tweet);
+                 //LOS USUARIOS SE AGREGAN BIEN
                 }
-            }
+
+
         }
 
         parser.close();
@@ -127,6 +136,7 @@ public class CargaDeDatos {
     }
     //Consulta 5
     public static MyList usuariosMasLikeados(){
+
                 return null;
             }
 
@@ -146,15 +156,22 @@ public class CargaDeDatos {
     //Esta parte es para metodos que ayudan a la carga de datos
         private static final AtomicLong idCounter = new AtomicLong(0);  //ESTO ES PARA GENERAR UN ID UNICO
 
-        public static long generateUniqueId() {
-            return idCounter.incrementAndGet();
-        }
+
+
         public static LocalDateTime convertStringToLocalDateTime(String dateString) throws DateTimeParseException {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            System.out.println(dateString + formatter);
             return LocalDateTime.parse(dateString, formatter);
         }
+        public static long generateUniqueId(String fechaCreado) {
+            // Aplicar función hash a la cadena para obtener un valor único
+            int hashCode = Objects.hash(fechaCreado);
+
+            // Convertir el valor hash en un ID único positivo
+            long uniqueId = Math.abs((long) hashCode);
+            return uniqueId;
+        }
 }
+
 
 //0 dni 1 username 2 user location 3 descripcion 4 FECHA CREADO CUENTA DEL USER 5 followers 6friends 7 favourites
 //8verified 9 date del tweet CON HORA MINUTO Y SEGUNDO 10 texto del tweet  11 hashtags 12 source 13 isretweet is boolean
