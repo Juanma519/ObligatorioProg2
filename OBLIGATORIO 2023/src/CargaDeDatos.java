@@ -1,29 +1,32 @@
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import uy.edu.um.adt.LinkedList.*;
+import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
+import uy.edu.um.adt.LinkedList.MyList;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CargaDeDatos {
     public static MyList<Tweet> tweets;
+    public static MyList<String> pilotos;
     public static MyList<Hashtag> hashtagsdif;
-    public static void CargaDeDatos() throws IOException, NumberFormatException {
+    public static MyList<Hashtag> hashtagsdifdia;
+
+    public static void cargaDeDatos() throws IOException, NumberFormatException {
         Reader in = new FileReader("OBLIGATORIO 2023/Data/f1_dataset_test.csv");
+        tweets = new MyLinkedListImpl<Tweet>();
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
         parser.iterator().next();
         int favoritos;
         for (CSVRecord record : parser) {
-            long idtweet;
-            try {
-                idtweet = Long.parseLong(record.get(0));
-            }  // Acceder al valor de la primera columna
-            catch (NumberFormatException e) {
-                continue;
-            }
             String username = record.get(1);  // Acceder al valor de la segunda columna
             try {
                 if (record.get(7).contains(".")) {
@@ -35,10 +38,11 @@ public class CargaDeDatos {
             } catch (NumberFormatException e) {
                 continue;
             }
-            LocalDate fecha;
+            LocalDateTime fechatweet;
             try {
-                fecha = LocalDate.parse(record.get(9));
+                fechatweet =convertStringToLocalDateTime(record.get(9));
             } catch (Exception e) {
+                System.out.println("Error en la fecha");  //ACA ESTA EK PROBLEMA
                 continue;
             }
             String texto = record.get(10);
@@ -54,34 +58,103 @@ public class CargaDeDatos {
             } catch (NumberFormatException e) {
                 continue;
             }
+            long idtweet=generateUniqueId();
 
-            //User  = new User(id,username);  //HAY UNOS PROBLEMAS CON LOS LONG Y LOS BOOLEAN E INt
-            Tweet tweet = new Tweet(idtweet, texto, username, fecha, source, favoritos, isretweet);
+            //User  = new User(,username);
+            Tweet tweet = new Tweet(idtweet,texto, username, fechatweet, source, favoritos, isretweet);
             tweets.add(tweet);
             for (int i = 0; i < values.length; i++) {
-                Hashtag hashtag = new Hashtag(values[i], fecha);
-                if (!hashtagsdif.contains(hashtag)) {
-                    hashtagsdif.add(hashtag);  //CAPAZ SE PUEDE HACER ALGO PARA AGILIZAR, COMO USAR OTRO TIPO DE LISTA
+                Hashtag hashtag = new Hashtag(values[i], fechatweet);
+                if (!tweet.getHashtags().contains(hashtag)) {
+                    tweet.addHashtag(hashtag);  //CAPAZ SE PUEDE HACER ALGO PARA AGILIZAR, COMO USAR OTRO TIPO DE LISTA
                 }
             }
         }
-//la primera columna no es id
+
         parser.close();
         in.close();
 
     }
-    public static int encontrarTweets(String frase){
+    public static void nombrePilotos(){  //Para leer losm pilotos, funciona
+        String busquedaPilotos="OBLIGATORIO 2023/Data/drivers.txt";
+        pilotos=new MyLinkedListImpl<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(busquedaPilotos))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                pilotos.add(line);
+
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: ");
+        }
+    }
+
+    //Consulta 1
+
+
+
+    //Consulta 2
+
+
+    //Consulta 3
+    public static int hashtagsDistintosDia(LocalDate dia){
+
         int cantidad=0;
-        String content="";
-        for(int i=0;i<tweets.size();i++){
-            content=tweets.get(i).getContent();
-            if(content.contains(frase)) {
+        hashtagsdifdia=new MyLinkedListImpl<>();
+        for (int i = 0; i < tweets.size(); i++) {
+            if(dia.compareTo(tweets.get(i).getDate().toLocalDate())==0){
+                for (int j = 0; j < tweets.get(i).getHashtags().size(); j++) {
+                   if (!hashtagsdifdia.contains(tweets.get(i).getHashtags().get(j))){
+                       hashtagsdifdia.add(tweets.get(i).getHashtags().get(j));
+                       cantidad++;
+                    }
+                }
+            }
+        }
+        return cantidad;
+
+    }
+    //Consulta 4
+    public static String hashtagMasUsadoDia(LocalDate dia) {
+        for (int i = 0; i < tweets.size(); i++) {
+            if (dia.compareTo(tweets.get(i).getDate().toLocalDate()) == 0) {
+                //ACA FALTA PERO ES POR ACA
+
+
+            }
+        }
+        return null;
+    }
+    //Consulta 5
+    public static MyList usuariosMasLikeados(){
+                return null;
+            }
+
+    //Consulta 6
+    public static int encontrarTweets(String frase) {
+        int cantidad = 0;
+        String content = "";
+        for (int i = 0; i < tweets.size(); i++) {
+            content = tweets.get(i).getContent();
+            if (content.contains(frase)) {
                 cantidad++;
             }
         }
 
         return cantidad;
     }
+    //Esta parte es para metodos que ayudan a la carga de datos
+        private static final AtomicLong idCounter = new AtomicLong(0);  //ESTO ES PARA GENERAR UN ID UNICO
+
+        public static long generateUniqueId() {
+            return idCounter.incrementAndGet();
+        }
+        public static LocalDateTime convertStringToLocalDateTime(String dateString) throws DateTimeParseException {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            System.out.println(dateString + formatter);
+            return LocalDateTime.parse(dateString, formatter);
+        }
 }
-//1 dni 2 user name 3 user location 4 descripcion 5 año creado cuenta 6 followers 7friends 8 favourites
-//9verified 10 date del tweet 11 texto del tweet  12 hashtags 13 source 14 isretweet is boolean
+
+//0 dni 1 username 2 user location 3 descripcion 4 FECHA CREADO CUENTA DEL USER 5 followers 6friends 7 favourites
+//8verified 9 date del tweet CON HORA MINUTO Y SEGUNDO 10 texto del tweet  11 hashtags 12 source 13 isretweet is boolean

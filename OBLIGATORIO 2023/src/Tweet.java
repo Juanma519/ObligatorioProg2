@@ -1,18 +1,18 @@
 import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 import uy.edu.um.adt.LinkedList.MyList;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Tweet {
     private long id;
     private String content;
     private String user;
-    private LocalDate date;
+    private LocalDateTime date;
     private String source;
     private int likes;
     private boolean isRetweet;
     private MyList<Hashtag> hashtags; //OJO EL ORDEN DE CREACION DE TWEETS
-    public Tweet(long id, String content, String user, LocalDate date, String source, int likes, boolean isRetweet) {
+    public Tweet(long id, String content, String user, LocalDateTime date, String source, int likes, boolean isRetweet) {
         this.id = id;
         this.content = content;
         this.user = user;
@@ -22,7 +22,9 @@ public class Tweet {
         this.isRetweet = isRetweet;
         this.hashtags = new MyLinkedListImpl<>();
     }
-
+    public void addHashtag(Hashtag hashtag){
+        hashtags.add(hashtag);
+    }
     public long getId() {
         return id;
     }
@@ -47,11 +49,11 @@ public class Tweet {
         this.user = user;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

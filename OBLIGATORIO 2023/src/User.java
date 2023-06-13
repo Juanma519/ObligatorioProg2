@@ -1,17 +1,18 @@
-import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
-import uy.edu.um.adt.LinkedList.MyList;
+import uy.edu.um.adt.Hash.HashImpl;
+import uy.edu.um.adt.Hash.MyHash;
 
 public class User {
     private long id;
     private String name;
-    private MyList<Tweet> tweets;
+    private MyHash<Long,Tweet> tweets; // Se puede cambiar el tipo de lista segun convenga
+    //Parece que conviene Hash,porque tiene el tiempo de ver el size mas corto.
+    // no se como es eso del LONG ,POSIBLE ERROR
 
-    //AGREGARLE UNA LISTA CON TWEETS, PERO NO SABEMOS DE Q TIPO
 
     public User(long id, String name) {
         this.id = id;
         this.name = name;
-        this.tweets = new MyLinkedListImpl<>();
+        this.tweets = new HashImpl<>(500); //el size habria que ver cuantos tweets por usuario hay
 
     }
 
@@ -31,11 +32,11 @@ public class User {
         this.name = name;
     }
 
-    public MyList<Tweet> getTweets() {
+    public MyHash<Long,Tweet> getTweets() {
         return tweets;
     }
 
-    public void setTweets(MyList<Tweet> tweets) {
+    public void setTweets(MyHash<Long,Tweet> tweets) {
         this.tweets = tweets;
     }
 }
