@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="apidocs">
-    <CLASSES />
-    <JAVADOC>
-      <root url="file://$PROJECT_DIR$/.idea/libraries/commons-csv-1.10.0/apidocs" />
-    </JAVADOC>
-    <SOURCES />
-  </library>
-</component>
