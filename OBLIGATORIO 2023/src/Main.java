@@ -93,9 +93,14 @@ public class Main {
         sc.nextLine();
         String format = sc.nextLine();
         LocalDate dia = LocalDate.parse(format);
-        CargaDeDatos.hashtagsDistintosDia(dia);
-        System.out.println("La cantidad de hashtags distintos el"+dia+" son: "+CargaDeDatos.hashtagsDistintosDia(dia));
+        try {
+            CargaDeDatos.hashtagsDistintosDia(dia);
+            System.out.println("La cantidad de hashtags distintos el" + dia + " son: " + CargaDeDatos.hashtagsDistintosDia(dia));
+        }catch (Exception e){
+            System.out.println("La cantidad de hashtags distintos el" + dia + " son: 0 ");
+        }
     }
+
     public static void opcion4(Scanner sc){
 
         System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
@@ -108,6 +113,7 @@ public class Main {
     }
     public static void opcion6(Scanner sc){
         System.out.println("Digite la palabra o frase que desea buscar: ");
+        sc.nextLine();
         String frase = sc.nextLine();
         int veces = CargaDeDatos.encontrarTweets(frase);
         System.out.println("La cantidad de tweets con la palabra o frase especifica es: " + veces);

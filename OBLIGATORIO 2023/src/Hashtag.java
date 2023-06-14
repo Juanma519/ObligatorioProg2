@@ -4,16 +4,15 @@ import java.time.LocalDateTime;
 public class Hashtag {
     private long id;
     private String text;
-    private LocalDateTime date;
 
-    public LocalDateTime getDate() {
-        return date;
+
+    public long getId() {
+        return id;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setId(long id) {
+        this.id = id;
     }
-
 
     public String getText() {
         return text;
@@ -23,15 +22,10 @@ public class Hashtag {
         this.text = text;
     }
 
-    public Hashtag(long id,String text, LocalDateTime date) {
+    public Hashtag(long id,String text) {
         this.id = id;
         this.text = text;
-        this.date=date;
 
-    }
-    public Hashtag(String text, LocalDateTime date) {
-        this.text = text;
-        this.date=date;
 
     }
 }

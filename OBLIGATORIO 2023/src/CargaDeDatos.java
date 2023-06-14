@@ -20,14 +20,14 @@ import java.util.Objects;
 public class CargaDeDatos {
     public static MyList<Tweet> tweets;
     public static MyList<String> pilotos;
-    public static MyList<Hashtag> hashtagsdif;
-    public static MyList<Hashtag> hashtagsdifdia;
+    public static MyHash<Long,Hashtag> hashtagsdiferentes;
     public static MyHash<Long,User> usuarios;
 
     public static void cargaDeDatos() throws IOException, NumberFormatException {
         Reader in = new FileReader("OBLIGATORIO 2023/Data/f1_dataset_test.csv");
         tweets = new MyLinkedListImpl<Tweet>();
-        usuarios= new HashImpl<>(100000);
+        usuarios= new HashImpl<>(30000);
+        hashtagsdiferentes= new HashImpl<>(250000);
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
         parser.iterator().next();
         int favoritos;
@@ -76,9 +76,22 @@ public class CargaDeDatos {
                 usuarioTemp.addTweet(tweet.getId(),tweet);
                  //LOS USUARIOS SE AGREGAN BIEN
                 }
+            for (int i = 0; i < values.length; i++) {
+                long idhashtag=generateUniqueId(values[i]);
+                Hashtag hastagtemp= new Hashtag(idhashtag,values[i]);
+                if (!hashtagsdiferentes.contains(idhashtag)){
+                    tweet.addHashtag(hastagtemp);
+                    hashtagsdiferentes.put(idhashtag,hastagtemp);
+                }
+                else {
+                    tweet.addHashtag(hashtagsdiferentes.get(idhashtag));
+                }
 
+            }
 
         }
+
+
 
         parser.close();
         in.close();
@@ -108,13 +121,12 @@ public class CargaDeDatos {
     //Consulta 3
     public static int hashtagsDistintosDia(LocalDate dia){
 
-        int cantidad=0;
-        hashtagsdifdia=new MyLinkedListImpl<>();
+        int cantidad=0;     //ACA FALTA PERO ES POR ACA
+
         for (int i = 0; i < tweets.size(); i++) {
             if(dia.compareTo(tweets.get(i).getDate().toLocalDate())==0){
-                for (int j = 0; j < tweets.get(i).getHashtags().size(); j++) {
-                   if (!hashtagsdifdia.contains(tweets.get(i).getHashtags().get(j))){
-                       hashtagsdifdia.add(tweets.get(i).getHashtags().get(j));
+                for (long j = 0; j < tweets.get(i).getHashtags().size(); j++) {
+                   if (!hashtagsdiferentes.contains(tweets.get(i).getHashtags().get(j).getId())){
                        cantidad++;
                     }
                 }
@@ -141,7 +153,7 @@ public class CargaDeDatos {
             }
 
     //Consulta 6
-    public static int encontrarTweets(String frase) {
+    public static int encontrarTweets(String frase) { //UNA OPCION ES HACER QUE LA HASH TENGA UNA FUNCION CON TODOS LOS VALORES
         int cantidad = 0;
         String content = "";
         for (int i = 0; i < tweets.size(); i++) {

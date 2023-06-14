@@ -1,3 +1,5 @@
+import uy.edu.um.adt.Hash.HashImpl;
+import uy.edu.um.adt.Hash.MyHash;
 import uy.edu.um.adt.LinkedList.MyLinkedListImpl;
 import uy.edu.um.adt.LinkedList.MyList;
 
@@ -11,7 +13,7 @@ public class Tweet {
     private String source;
     private int likes;
     private boolean isRetweet;
-    private MyList<Hashtag> hashtags; //OJO EL ORDEN DE CREACION DE TWEETS
+    private MyHash<Long,Hashtag> hashtags; //OJO EL ORDEN DE CREACION DE TWEETS
     public Tweet(long id, String content, String user, LocalDateTime date, String source, int likes, boolean isRetweet) {
         this.id = id;
         this.content = content;
@@ -20,10 +22,10 @@ public class Tweet {
         this.source = source;
         this.likes = likes;
         this.isRetweet = isRetweet;
-        this.hashtags = new MyLinkedListImpl<>();
+        this.hashtags = new HashImpl<>(5);
     }
     public void addHashtag(Hashtag hashtag){
-        hashtags.add(hashtag);
+        hashtags.put(hashtag.getId(),hashtag);
     }
     public long getId() {
         return id;
@@ -81,11 +83,8 @@ public class Tweet {
         isRetweet = retweet;
     }
 
-    public MyList<Hashtag> getHashtags() {
+    public MyHash<Long,Hashtag> getHashtags() {
         return hashtags;
     }
 
-    public void setHashtags(MyList<Hashtag> hashtags) {
-        this.hashtags = hashtags;
-    }
 }
