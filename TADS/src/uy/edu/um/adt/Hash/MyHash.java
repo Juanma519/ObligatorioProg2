@@ -7,4 +7,6 @@ public interface MyHash<K, V> {
         public void remove(K clave);
         public int size();
         public V get(K key);
-    }
+
+        int getTablesize();
+}

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 public class Hashtag {
     private long id;
     private String text;
-
+    private int usosDia;
 
     public long getId() {
         return id;
@@ -25,7 +25,6 @@ public class Hashtag {
     public Hashtag(long id,String text) {
         this.id = id;
         this.text = text;
-
-
+        this.usosDia=0;
     }
 }

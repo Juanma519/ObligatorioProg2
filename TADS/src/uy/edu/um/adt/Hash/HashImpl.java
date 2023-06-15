@@ -186,4 +186,11 @@ public class HashImpl<K,V> implements MyHash<K,V> {
         }
 
     }
+
+    @Override
+    public int getTablesize() {
+        return tableSize;
+    }
+
+
 }

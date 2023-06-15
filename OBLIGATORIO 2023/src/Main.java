@@ -1,9 +1,11 @@
+import uy.edu.um.adt.Queue.EmptyQueueException;
+
 import java.time.LocalDate;
 import java.util.Scanner;
 
 ;
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws EmptyQueueException {
         Scanner sc = new Scanner(System.in);
 
         int opcion;
@@ -86,7 +88,8 @@ public class Main {
         }
         LocalDate fecha = LocalDate.of(year, month, 1);
     }
-    public static void opcion2(){
+    public static void opcion2() throws EmptyQueueException {
+        CargaDeDatos.usuariosConMasTweets();
     }
     public static void opcion3(Scanner sc){
         System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
@@ -108,7 +111,8 @@ public class Main {
         String format = sc.nextLine();
         LocalDate dia = LocalDate.parse(format);
     }
-    public static void opcion5(){
+    public static void opcion5() throws EmptyQueueException {
+        CargaDeDatos.usuariosMasLikeados();
 
     }
     public static void opcion6(Scanner sc){
