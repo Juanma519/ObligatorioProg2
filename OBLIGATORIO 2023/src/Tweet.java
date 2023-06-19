@@ -13,7 +13,8 @@ public class Tweet {
     private String source;
     private int likes;
     private boolean isRetweet;
-    private MyHash<Long,Hashtag> hashtags; //OJO EL ORDEN DE CREACION DE TWEETS
+    private MyLinkedListImpl<Hashtag> hashtags;//OJO EL ORDEN DE CREACION DE TWEETS
+    private int cantidadHashtags;
     public Tweet(long id, String content, String user, LocalDateTime date, String source, int likes, boolean isRetweet) {
         this.id = id;
         this.content = content;
@@ -22,11 +23,18 @@ public class Tweet {
         this.source = source;
         this.likes = likes;
         this.isRetweet = isRetweet;
-        this.hashtags = new HashImpl<>(5);
+        this.hashtags = new MyLinkedListImpl();
+        this.cantidadHashtags=0;
     }
     public void addHashtag(Hashtag hashtag){
-        hashtags.put(hashtag.getId(),hashtag);
+        hashtags.add(hashtag);
+        this.cantidadHashtags+=1;
     }
+
+    public int getCantidadHashtags() {
+        return cantidadHashtags;
+    }
+
     public long getId() {
         return id;
     }
@@ -83,7 +91,7 @@ public class Tweet {
         isRetweet = retweet;
     }
 
-    public MyHash<Long,Hashtag> getHashtags() {
+    public MyLinkedListImpl getHashtags() {
         return hashtags;
     }
 

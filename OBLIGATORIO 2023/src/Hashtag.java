@@ -25,6 +25,14 @@ public class Hashtag {
     public Hashtag(long id,String text) {
         this.id = id;
         this.text = text;
+    }
+    public void aumentarUsos(){
+        this.usosDia++;
+    }
+    public void resetearUsos(){
         this.usosDia=0;
+    }
+    public int getUsosDia(){
+        return this.usosDia;
     }
 }

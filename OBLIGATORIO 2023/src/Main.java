@@ -1,6 +1,7 @@
 import uy.edu.um.adt.Queue.EmptyQueueException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 ;
@@ -16,11 +17,21 @@ public class Main {
                 case 0:
                     try {
                         CargaDeDatos.cargaDeDatos();
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Error en la carga de datos");
                         continue;
                     }
+                    try {CargaDeDatos.nombrePilotos();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Error en la carga de datos");
+                        continue;
+                    }
+
                     break;
 
                 case 1:
@@ -46,7 +57,7 @@ public class Main {
                     break;
 
                 case 7:
-                    System.out.println("Salir del programa");
+                    System.out.println("Saliendo del programa...");
                     sc.close();
                     break;
 
@@ -70,7 +81,7 @@ public class Main {
         System.out.println("6.Cantidad de tweets con una palabra o frase especifica");
         System.out.println("7.Salir del programa");
     }
-    public static void opcion1(Scanner sc){
+    public static void opcion1(Scanner sc) throws EmptyQueueException {
         int year = 0;
         int month=0;
         System.out.println("Digite el año que desea consultar: ");
@@ -87,6 +98,7 @@ public class Main {
 
         }
         LocalDate fecha = LocalDate.of(year, month, 1);
+        CargaDeDatos.pilotosMasMencionados(fecha);
     }
     public static void opcion2() throws EmptyQueueException {
         CargaDeDatos.usuariosConMasTweets();
@@ -104,12 +116,13 @@ public class Main {
         }
     }
 
-    public static void opcion4(Scanner sc){
+    public static void opcion4(Scanner sc) throws EmptyQueueException {
 
         System.out.println("Digite el dia en notacion YYYY-MM-DD: ");
         sc.nextLine();
         String format = sc.nextLine();
         LocalDate dia = LocalDate.parse(format);
+        CargaDeDatos.hashtagMasUsadoDia(dia);
     }
     public static void opcion5() throws EmptyQueueException {
         CargaDeDatos.usuariosMasLikeados();

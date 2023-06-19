@@ -9,6 +9,7 @@ import uy.edu.um.adt.Queue.EmptyQueueException;
 import uy.edu.um.adt.Queue.ImplPriorityQueue;
 import uy.edu.um.adt.Queue.MyPriorityQueue;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,19 +22,22 @@ import java.util.Objects;
 
 public class CargaDeDatos {
     public static MyList<Tweet> tweets;
-    public static MyList<String> pilotos;
+    public static MyList<Pilotos> pilotos;
     public static MyHash<Long,Hashtag> hashtagsdiferentes;
+    public static MyList<Hashtag> hashtagsdiferentesLinkedList;
     public static MyHash<Long,User> usuarios;
     public static MyList<User> usuariosLinkedList;
     public static int cantidadTweets;
     public static int cantidadUsuarios;
-
+    public static int cantidadPilotos;
+    public static int cantidadHashtagsDif;
     public static void cargaDeDatos() throws IOException, NumberFormatException {
         Reader in = new FileReader("OBLIGATORIO 2023/Data/f1_dataset_test.csv");
         tweets = new MyLinkedListImpl<Tweet>();
         usuarios= new HashImpl<>(30000);
         usuariosLinkedList=new MyLinkedListImpl<User>();
         hashtagsdiferentes= new HashImpl<>(250000);
+        hashtagsdiferentesLinkedList=new MyLinkedListImpl<Hashtag>();
         CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT);
         parser.iterator().next();
         int favoritos;
@@ -82,6 +86,9 @@ public class CargaDeDatos {
             }
             long idtweet=generateUniqueId(paraFecha);
             Tweet tweet = new Tweet(idtweet,texto, username, fechatweet, source, favoritos, isretweet);
+
+
+
             cantidadTweets++;
             tweets.add(tweet);
             if (!usuarios.contains(idUser)){  //Si no esta el usuario, lo agrega
@@ -97,10 +104,12 @@ public class CargaDeDatos {
             }
             for (int i = 0; i < values.length; i++) {
                 long idhashtag=generateUniqueId(values[i]);
-                Hashtag hastagtemp= new Hashtag(idhashtag,values[i]);
+                Hashtag hashtagtemp= new Hashtag(idhashtag,values[i]);
                 if (!hashtagsdiferentes.contains(idhashtag)){
-                    tweet.addHashtag(hastagtemp);
-                    hashtagsdiferentes.put(idhashtag,hastagtemp);
+                    tweet.addHashtag(hashtagtemp);
+                    hashtagsdiferentes.put(idhashtag,hashtagtemp);
+                    hashtagsdiferentesLinkedList.add(hashtagtemp);
+                    cantidadHashtagsDif++;
                 }
                 else {
                     tweet.addHashtag(hashtagsdiferentes.get(idhashtag));
@@ -122,8 +131,9 @@ public class CargaDeDatos {
         try (BufferedReader reader = new BufferedReader(new FileReader(busquedaPilotos))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                pilotos.add(line);
-
+                Pilotos pilotos1 = new Pilotos(line);
+                pilotos.add(pilotos1);
+                cantidadPilotos++;
             }
         } catch (IOException e) {
             System.out.println("Error al leer el archivo: ");
@@ -131,7 +141,44 @@ public class CargaDeDatos {
     }
 
     //Consulta 1
+    public static void pilotosMasMencionados(LocalDate fecha) throws EmptyQueueException {
+        ImplPriorityQueue<Pilotos> pilotosMasMencionados = new ImplPriorityQueue<>();
+        for (int i=0;i<cantidadTweets;i++){
+            Tweet tweettemp=tweets.get(i);
+            int anio1=fecha.getYear();
+            int anio2=tweettemp.getDate().getYear();
+            boolean iguales=anio1 == anio2;
+            if ((fecha.getMonth().equals(tweettemp.getDate().getMonth()))){
+                if (iguales){
+                    for (int j=0;j<cantidadPilotos;j++){
+                        Pilotos pilototemp=pilotos.get(j);
+                        if (tweettemp.getContent().contains(pilototemp.getNombre())){
+                            pilototemp.aumentarOcurrencias();
+                        }
+                    }
+                }
+            }
+        }
+        for (int i=0;i<cantidadPilotos;i++){
+            Pilotos pilotoX=pilotos.get(i);
+            int cantidad=pilotoX.getOcurrencias();
+            pilotosMasMencionados.enqueueWithPriority(pilotoX,cantidad);
 
+        }
+        Pilotos pilotoX = null;
+        for (int i=0;i<10;i++){
+            try{pilotoX=pilotosMasMencionados.dequeue();}
+            catch (EmptyQueueException e){
+                System.out.println("No hay mas pilotos");
+            }
+            int cantidad=pilotoX.getOcurrencias();
+            String nombre=pilotoX.getNombre();
+            int top=i+1;
+            System.out.println("TOP "+top+". Nombre: "+nombre+" Cantidad de menciones: "+cantidad);
+            pilotoX.resetearOcurrencias();
+        }
+
+    }
 
 
     //Consulta 2
@@ -164,12 +211,13 @@ public class CargaDeDatos {
     public static int hashtagsDistintosDia(LocalDate dia){
 
         int cantidad=0;     //ACA FALTA PERO ES POR ACA
-        MyHash hashtagsdia=new HashImpl<>(500);
+        MyHash hashtagsdia=new HashImpl<Long,Hashtag>(500);
         for (int i = 0; i < cantidadTweets; i++) {
-            if(dia.compareTo(tweets.get(i).getDate().toLocalDate())==0){
-                for (long j = 0; j < tweets.get(i).getHashtags().size(); j++) {
-                    Hashtag tempId=tweets.get(i).getHashtags().get(j);
-                   if (!hashtagsdiferentes.contains(tempId.getId())){
+            Tweet tweettemp=tweets.get(i);
+            if(dia.isEqual(tweettemp.getDate().toLocalDate())){
+                for (int j = 0; j < tweettemp.getCantidadHashtags(); j++) {
+                    Hashtag tempId= (Hashtag) tweettemp.getHashtags().get(j);
+                   if (!hashtagsdia.contains(tempId.getId())){
                        cantidad++;
                        hashtagsdia.put(tempId.getId(),tempId);
                     }
@@ -180,15 +228,27 @@ public class CargaDeDatos {
 
     }
     //Consulta 4
-    public static String hashtagMasUsadoDia(LocalDate dia) {
+    public static void hashtagMasUsadoDia(LocalDate dia) throws EmptyQueueException {
+        ImplPriorityQueue<Hashtag> hashtagsMasUsados = new ImplPriorityQueue<>();
         for (int i = 0; i < cantidadTweets; i++) {
             if (dia.compareTo(tweets.get(i).getDate().toLocalDate()) == 0) {
-
-
+                Tweet tweettemp = tweets.get(i);
+                int cantidad = tweettemp.getCantidadHashtags();
+                for (int j = 0; j < cantidad; j++) {
+                    Hashtag hashtagtemp = (Hashtag) tweettemp.getHashtags().get(j);
+                    hashtagtemp.aumentarUsos();
+                }
 
             }
         }
-        return null;
+        for (int i = 0; i < cantidadHashtagsDif; i++) {
+            Hashtag hashtagtemp = hashtagsdiferentesLinkedList.get(i);
+            int cantidad = hashtagtemp.getUsosDia();
+            hashtagsMasUsados.enqueueWithPriority(hashtagtemp, cantidad);
+            hashtagtemp.resetearUsos();
+        }
+        hashtagsMasUsados.dequeue();
+        System.out.println(hashtagsMasUsados.dequeue().getText());
     }
     //Consulta 5
     public static void usuariosMasLikeados() throws EmptyQueueException {
