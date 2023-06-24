@@ -93,7 +93,6 @@ public class CargaDeDatos {
             User user = new User(idUser, username, verified);
 
             todoslosTweets.put(cantidadTweets, tweet); // agregamos el tweet a la hashtable de todos los tweets
-            listaUsuarios.put(cantidadUsuarios, user);
 
 
             cantidadTweets++;
@@ -102,6 +101,7 @@ public class CargaDeDatos {
                 usuarioTemp.addTweet(tweet.getId(),tweet);
                 usuarios.put(usuarioTemp.getId(),usuarioTemp);
                 cantidadUsuarios++;
+                listaUsuarios.put(cantidadUsuarios, user);
                  //LOS USUARIOS SE AGREGAN BIEN
                 }
             else{
@@ -193,8 +193,10 @@ public class CargaDeDatos {
         ImplPriorityQueue<User> usuariosMasTweets = new ImplPriorityQueue<>();
         for (int i = 0; i <cantidadUsuarios ; i++) {
             User usuarioT = listaUsuarios.get(i);
-            int prioridad=usuarioT.getCantidadTweets();
-            usuariosMasTweets.enqueueWithPriority(usuarioT,prioridad);
+            if (usuarioT != null) { // se fija que ningun elemento de lista usuarios sea null
+                int prioridad = usuarioT.getCantidadTweets();
+                usuariosMasTweets.enqueueWithPriority(usuarioT, prioridad);
+            }
 
         }
         for (int i=0;i<15;i++){
@@ -262,8 +264,10 @@ public class CargaDeDatos {
         ImplPriorityQueue<User> usuariosMasLikeados=new ImplPriorityQueue<>();
         for (int i = 0; i <cantidadUsuarios ; i++) {
             User usuarioT = listaUsuarios.get(i);
-            int prioridad=usuarioT.getFavoritos();
-            usuariosMasLikeados.enqueueWithPriority(usuarioT,prioridad);
+            if (usuarioT != null) {
+                int prioridad = usuarioT.getFavoritos();
+                usuariosMasLikeados.enqueueWithPriority(usuarioT, prioridad);
+            }
         }
         for (int i = 0; i < 7; i++) {
             User userfav=usuariosMasLikeados.dequeue();
